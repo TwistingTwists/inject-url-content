@@ -2,22 +2,31 @@ const express = require('express');
 const fetch = require('node-fetch');
 const { JSDOM } = require('jsdom');
 const { convert } = require('html-to-text');
+const cors = require('cors');
+const NodeCache = require('node-cache');
+const myCache = new NodeCache();
 
 const app = express();
 const port = 3000;
+
+app.use(cors());
 
 app.get('/getUrlContent', async (req, res) => {
   const url = req.query.url;
   console.log(url);
 
   try {
-    const response = await fetch(url);
-    const data = await response.text();
-    const dom = new JSDOM(data);
-    const htmlContent = dom.window.document.body.innerHTML;
-    const textContent = convert(htmlContent, {
-      wordwrap: 130
-    });
+    let textContent = myCache.get(url);
+    if (textContent == undefined) {
+      const response = await fetch(url);
+      const data = await response.text();
+      const dom = new JSDOM(data);
+      const htmlContent = dom.window.document.body.innerHTML;
+      textContent = convert(htmlContent, {
+        wordwrap: 130
+      });
+      myCache.set(url, textContent);
+    }
     res.send(textContent);
   } catch (error) {
     console.log("Error:", error);
