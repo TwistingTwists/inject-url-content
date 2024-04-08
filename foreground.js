@@ -96,9 +96,18 @@ async function runCodeEvery3Seconds() {
         if (urls && urls.length > 0) {
           console.log(urls);
           urls.forEach(async (url) => {
-            const url_text = await getCleanedURLContent(url);
-            console.log(url_text, "url_text");
-            insertTextAtCursor(url_text);
+            if (!window.urlContentMap) {
+              window.urlContentMap = new Map();
+            }
+
+            if (!window.urlContentMap.has(url)) {
+              const url_text = await getCleanedURLContent(url);
+              console.log(url_text, "url_text");
+              window.urlContentMap.set(url, url_text);
+              insertTextAtCursor(
+                `  Here is the content of url given above \n """ ${url_text} """ `
+              );
+            }
           });
         }
       } else {
