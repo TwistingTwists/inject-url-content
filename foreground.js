@@ -7,13 +7,12 @@
 console.log(
   "This prints to the console of the page (injected only if the page url matched)"
 );
-console.log("this shoudl work");
+console.log("this should work");
 
 // Function to parse URLs from a given text
 function parseURLs(maybe_text) {
   // Use a regular expression to match URLs in the text
   let urlRegex = /(https?:\/\/[^\s]+)/g;
-  // let urls = text.match(urlRegex);
   let urls = maybe_text ? maybe_text.match(urlRegex) : [];
 
   // Return the array of URLs
@@ -24,23 +23,12 @@ function parseURLs(maybe_text) {
 async function getCleanedURLContent(url) {
   try {
     // Use the Fetch API to get the content of the URL
-    const response = await fetch(url);
+    console.log('makeing the request')
+    const response = await fetch(`http://165.227.210.182:3000/getUrlContent?url=${encodeURIComponent(url)}`);
     const data = await response.text();
 
-    // Use a DOMParser to parse the HTML content
-    let parser = new DOMParser();
-    let doc = parser.parseFromString(data, "text/html");
-
-    // Get the text content of the body element, which should contain the main content of the page
-    let textContent = doc.body.textContent;
-    console.log(doc.body.textContent, "doc.body.textContent");
-
-    // Clean the text content by removing any extra whitespace
-    // let cleanedTextContent = textContent.replace(/\s+/g, ' ').trim();
-
     // Return the cleaned text content
-    // return cleanedTextContent;
-    return textContent;
+    return data;
   } catch (error) {
     console.log("Error:", error);
   }
@@ -48,8 +36,6 @@ async function getCleanedURLContent(url) {
 
 // Function to get the inner text of a fieldset tag from the current page
 function getClaudeText() {
-  // Get the fieldset element from the current page
-  // let fieldsetElement = document.querySelector('fieldset');
   const fieldsetElement = document.querySelector("div[contenteditable=true]");
 
   // Check if the fieldset element exists
@@ -65,7 +51,6 @@ function getClaudeText() {
 }
 
 function getGeminiText() {
-  // Get the fieldset element from the current page
   let fieldsetElement = document.querySelector("input-area-v2");
 
   // Check if the fieldset element exists
@@ -83,7 +68,6 @@ function getGeminiText() {
 async function runCodeEvery3Seconds() {
   try {
     let currentURL = window.location.href;
-    // console.log(`${currentURL}`);
     console.log("code is running ----");
 
     if (currentURL.includes("https://gemini.google.com")) {
@@ -125,7 +109,6 @@ function insertTextAtCursor(text) {
   const sel = window.getSelection();
   if (sel.getRangeAt && sel.rangeCount) {
     const range = sel.getRangeAt(0);
-    // range.deleteContents();
     const textNode = document.createTextNode(text);
     range.insertNode(textNode);
 
