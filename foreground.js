@@ -81,6 +81,11 @@ async function getContentFromIndexerAndInsert(content) {
           console.log(url_text, "url_text");
           window.urlContentMap.set(url, url_text);
           createCopyButton(url, url_text);
+        } else {
+        if (window.urlContentMap.has(url)) {
+          const url_text = window.urlContentMap.get(url);
+          createCopyButton(url, url_text);
+        }
         }
       });
     }
@@ -106,11 +111,13 @@ function getKeyboardCursorScreenPosition(element) {
 function createCopyButton(url, content) {
   console.log('Creating copy button');
   const copyButton = document.createElement("button");
-  copyButton.textContent = "⎘ url content";
-  copyButton.style.width = "30px";
-  copyButton.style.height = "10px";
+  copyButton.textContent = "Copy";
+  // copyButton.style.width = "40px";
+  copyButton.style.height = "12px";
   copyButton.style.backgroundColor = "lightblue";
   copyButton.style.position = "fixed";
+  copyButton.style.fontStyle = "italic";
+  copyButton.style.fontSize = "9px";
 
   // Get the keyboard cursor screen position
   const cursorPosition = getKeyboardCursorScreenPosition();
