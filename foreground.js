@@ -24,7 +24,7 @@ async function getCleanedURLContent(url) {
   try {
     // Use the Fetch API to get the content of the URL
     console.log('makeing the request')
-    const response = await fetch(`http://165.227.210.182:3000/getUrlContent?url=${encodeURIComponent(url)}`);
+    const response = await fetch(`https://indexer.felvin.com/getUrlContent?url=${encodeURIComponent(url)}`);
     const data = await response.text();
 
     // Return the cleaned text content
@@ -71,7 +71,31 @@ async function runCodeEvery3Seconds() {
     console.log("code is running ----");
 
     if (currentURL.includes("https://gemini.google.com")) {
-      console.log(getGeminiText());
+      console.log("gemini path")
+      const content = getGeminiText();
+      console.log(content);
+      if (content) {
+        const urls = parseURLs(content);
+        if (urls && urls.length > 0) {
+          console.log(urls);
+          urls.forEach(async (url) => {
+            if (!window.urlContentMap) {
+              window.urlContentMap = new Map();
+            }
+
+            if (!window.urlContentMap.has(url)) {
+              const url_text = await getCleanedURLContent(url);
+              console.log(url_text, "url_text");
+              window.urlContentMap.set(url, url_text);
+              insertTextAtCursor(
+                `  Here is the content of url given above \n """ ${url_text} """ `
+              );
+            }
+          });
+        }
+      } else {
+        console.log("no content found");
+      }
     } else if (currentURL.includes("https://claude.ai")) {
       const content = getClaudeText();
       console.log(content);
