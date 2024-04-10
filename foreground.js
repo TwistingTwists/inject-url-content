@@ -66,7 +66,6 @@ function getGeminiText() {
 }
 
 async function getContentFromIndexerAndInsert(content) {
-
   console.log("getContentFromIndexerAndInsert ----")
   if (content) {
     const urls = parseURLs(content);
@@ -81,15 +80,55 @@ async function getContentFromIndexerAndInsert(content) {
           const url_text = await getCleanedURLContent(url);
           console.log(url_text, "url_text");
           window.urlContentMap.set(url, url_text);
-          insertTextAtCursor(
-            `  Here is the content of url given above \n """ ${url_text} """ `
-          );
+          createCopyButton(url, url_text);
         }
       });
     }
   } else {
     console.log("no content found");
   }
+}
+
+function getKeyboardCursorScreenPosition(element) {
+  const selection = window.getSelection();
+  if (selection.rangeCount > 0) {
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    return {
+      x: rect.left,
+      y: rect.top
+    };
+  } else {
+    return null;
+  }
+}
+
+function createCopyButton(url, content) {
+  console.log('Creating copy button');
+  const copyButton = document.createElement("button");
+  copyButton.textContent = "⎘ url content";
+  copyButton.style.width = "30px";
+  copyButton.style.height = "10px";
+  copyButton.style.backgroundColor = "lightblue";
+  copyButton.style.position = "fixed";
+
+  // Get the keyboard cursor screen position
+  const cursorPosition = getKeyboardCursorScreenPosition();
+  console.log(`keyboard position ${cursorPosition}`)
+  if (cursorPosition) {
+    copyButton.style.left = cursorPosition.x + "px";
+    copyButton.style.top = cursorPosition.y + "px";
+  } else {
+    // If the cursor position is not available, use the event.clientX and event.clientY
+    copyButton.style.left = event.clientX + "px";
+    copyButton.style.top = event.clientY + "px";
+  }
+
+  copyButton.addEventListener("click", () => {
+    navigator.clipboard.writeText(content);
+    console.log("Copied to clipboard:", content);
+  });
+  document.body.appendChild(copyButton);
 }
 
 async function runCodeEvery3Seconds() {
@@ -113,25 +152,4 @@ async function runCodeEvery3Seconds() {
   }
 }
 
-function insertTextAtCursor(text) {
-  console.log("inside insertTextAtCursor");
-  console.log(text);
-  const sel = window.getSelection();
-  if (sel.getRangeAt && sel.rangeCount) {
-    const range = sel.getRangeAt(0);
-    const textNode = document.createTextNode(text);
-    range.insertNode(textNode);
-
-    // Move caret to the end of the newly inserted text node
-    range.setStart(textNode, textNode.length);
-    range.setEnd(textNode, textNode.length);
-    sel.removeAllRanges();
-    sel.addRange(range);
-  }
-}
-
-document.addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
-    runCodeEvery3Seconds();
-  }
-});
+setInterval(runCodeEvery3Seconds, 3000);
