@@ -65,6 +65,33 @@ function getGeminiText() {
   }
 }
 
+async function getContentFromIndexerAndInsert(content) {
+
+  console.log("getContentFromIndexerAndInsert ----")
+  if (content) {
+    const urls = parseURLs(content);
+    if (urls && urls.length > 0) {
+      console.log(urls);
+      urls.forEach(async (url) => {
+        if (!window.urlContentMap) {
+          window.urlContentMap = new Map();
+        }
+
+        if (!window.urlContentMap.has(url)) {
+          const url_text = await getCleanedURLContent(url);
+          console.log(url_text, "url_text");
+          window.urlContentMap.set(url, url_text);
+          insertTextAtCursor(
+            `  Here is the content of url given above \n """ ${url_text} """ `
+          );
+        }
+      });
+    }
+  } else {
+    console.log("no content found");
+  }
+}
+
 async function runCodeEvery3Seconds() {
   try {
     let currentURL = window.location.href;
@@ -74,53 +101,12 @@ async function runCodeEvery3Seconds() {
       console.log("gemini path")
       const content = getGeminiText();
       console.log(content);
-      if (content) {
-        const urls = parseURLs(content);
-        if (urls && urls.length > 0) {
-          console.log(urls);
-          urls.forEach(async (url) => {
-            if (!window.urlContentMap) {
-              window.urlContentMap = new Map();
-            }
+      await getContentFromIndexerAndInsert(content)
 
-            if (!window.urlContentMap.has(url)) {
-              const url_text = await getCleanedURLContent(url);
-              console.log(url_text, "url_text");
-              window.urlContentMap.set(url, url_text);
-              insertTextAtCursor(
-                `  Here is the content of url given above \n """ ${url_text} """ `
-              );
-            }
-          });
-        }
-      } else {
-        console.log("no content found");
-      }
     } else if (currentURL.includes("https://claude.ai")) {
       const content = getClaudeText();
       console.log(content);
-      if (content) {
-        const urls = parseURLs(content);
-        if (urls && urls.length > 0) {
-          console.log(urls);
-          urls.forEach(async (url) => {
-            if (!window.urlContentMap) {
-              window.urlContentMap = new Map();
-            }
-
-            if (!window.urlContentMap.has(url)) {
-              const url_text = await getCleanedURLContent(url);
-              console.log(url_text, "url_text");
-              window.urlContentMap.set(url, url_text);
-              insertTextAtCursor(
-                `  Here is the content of url given above \n """ ${url_text} """ `
-              );
-            }
-          });
-        }
-      } else {
-        console.log("no content found");
-      }
+      await getContentFromIndexerAndInsert(content)
     }
   } catch (error) {
     console.log("error: runCodeEvery3Seconds", error);
