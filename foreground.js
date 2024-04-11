@@ -20,14 +20,7 @@ function parseURLs(maybe_text) {
 }
 
 
-const buttonElement = document.createElement('button');
-buttonElement.innerHTML = `<img src="${chrome.runtime.getURL('button.png')}">`;
-buttonElement.style.position = 'fixed';
-buttonElement.style.bottom = '20px';
-buttonElement.style.left = '20px';
-buttonElement.style.zIndex = '9999';
-buttonElement.style.width = '90px';
-document.body.appendChild(buttonElement);
+
 
 
 // Function to read the content of a URL and return the cleaned text
@@ -91,11 +84,11 @@ async function getContentFromIndexerAndInsert(content) {
           const url_text = await getCleanedURLContent(url);
           console.log(url_text, "url_text");
           window.urlContentMap.set(url, url_text);
-          createCopyButton(url, url_text);
+          createInsertContentButton(url, url_text);
         } else {
         if (window.urlContentMap.has(url)) {
           const url_text = window.urlContentMap.get(url);
-          createCopyButton(url, url_text);
+          createInsertContentButton(url, url_text);
         }
         }
       });
@@ -119,34 +112,23 @@ function getKeyboardCursorScreenPosition(element) {
   }
 }
 
-function createCopyButton(url, content) {
+function createInsertContentButton(url, content) {
   console.log('Creating copy button');
-  const copyButton = document.createElement("button");
-  copyButton.textContent = "Copy";
-  // copyButton.style.width = "40px";
-  copyButton.style.height = "12px";
-  copyButton.style.backgroundColor = "lightblue";
-  copyButton.style.position = "fixed";
-  copyButton.style.fontStyle = "italic";
-  copyButton.style.fontSize = "9px";
 
-  // Get the keyboard cursor screen position
-  const cursorPosition = getKeyboardCursorScreenPosition();
-  console.log(`keyboard position ${cursorPosition}`)
-  if (cursorPosition) {
-    copyButton.style.left = cursorPosition.x + "px";
-    copyButton.style.top = cursorPosition.y + "px";
-  } else {
-    // If the cursor position is not available, use the event.clientX and event.clientY
-    copyButton.style.left = event.clientX + "px";
-    copyButton.style.top = event.clientY + "px";
-  }
+  const buttonElement = document.createElement('button');
+  buttonElement.innerHTML = `<img src="${chrome.runtime.getURL('button.png')}">`;
+  buttonElement.style.position = 'fixed';
+  buttonElement.style.bottom = '20px';
+  buttonElement.style.left = '20px';
+  buttonElement.style.zIndex = '9999';
+  buttonElement.style.width = '120px';
 
-  copyButton.addEventListener("click", () => {
+  buttonElement.addEventListener("click", () => {
     navigator.clipboard.writeText(content);
     console.log("Copied to clipboard:", content);
+
   });
-  document.body.appendChild(copyButton);
+  document.body.appendChild(buttonElement);
 }
 
 async function runCodeEvery3Seconds() {

@@ -13,7 +13,8 @@
         "default_title": "Chrome Addon v3 Starter",
         "default_popup": "popup/popup.html"
     },
-    "permissions": [],
+    "permissions": [
+        "activeTab"    ],
     "host_permissions": [
         "*://*/*"
     ],
