@@ -19,6 +19,17 @@ function parseURLs(maybe_text) {
   return urls;
 }
 
+
+const buttonElement = document.createElement('button');
+buttonElement.innerHTML = `<img src="${chrome.runtime.getURL('button.png')}">`;
+buttonElement.style.position = 'fixed';
+buttonElement.style.bottom = '20px';
+buttonElement.style.left = '20px';
+buttonElement.style.zIndex = '9999';
+buttonElement.style.width = '90px';
+document.body.appendChild(buttonElement);
+
+
 // Function to read the content of a URL and return the cleaned text
 async function getCleanedURLContent(url) {
   try {
@@ -159,4 +170,4 @@ async function runCodeEvery3Seconds() {
   }
 }
 
-setInterval(runCodeEvery3Seconds, 3000);
+setInterval(runCodeEvery3Seconds, 800);

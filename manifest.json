@@ -20,6 +20,12 @@
     "background": {
         "service_worker": "service-worker.js"
     },
+    "web_accessible_resources": [
+        {
+            "resources": ["button.svg", "button.png"],
+            "matches": ["<all_urls>"]
+        }
+    ],
     "content_scripts": [{
         "js": ["foreground.js"],
         "matches": ["<all_urls>"]
