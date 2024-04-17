@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
     "name": "Insert URL Content",
-    "description": "The tool lets you easily insert or copy-paste content from any link on Claude, Gemini.",
-    "version": "0.0.5",
+    "description": "The tool lets you easily insert or copy-paste content from any link on ChatGPT, Claude, Gemini.",
+    "version": "1.0.0",
     "icons": {
         "16": "logo/logo-16.png",
         "48": "logo/logo-48.png",
