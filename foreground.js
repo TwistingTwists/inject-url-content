@@ -20,7 +20,7 @@ function parseURLs(maybe_text) {
 }
 
 
-
+const BUTTON_ID = 'claude-url-inject' // Change this according to the website
 
 
 // Function to read the content of a URL and return the cleaned text
@@ -96,6 +96,12 @@ async function getContentFromIndexerAndInsert(content) {
           window.urlButtonCreatedSet.add(url);
         }
       }
+    } else {
+        const existingButton = document.getElementById(BUTTON_ID);
+        window.urlButtonCreatedSet = new Set();
+        if (existingButton) {
+          existingButton.remove();
+        }
     }
   } else {
     console.log("no content found");
@@ -120,7 +126,7 @@ function createInsertContentButton(url, content) {
   console.log('Creating copy button');
 
   const buttonElement = document.createElement('button');
-  buttonElement.id = 'claude-url-inject';
+  buttonElement.id = BUTTON_ID;
   buttonElement.innerHTML = `<img src="${chrome.runtime.getURL('button.png')}">`;
 
   buttonElement.addEventListener("click", () => {
