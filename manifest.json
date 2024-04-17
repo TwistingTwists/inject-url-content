@@ -18,7 +18,8 @@
             "resources": ["button.svg", "button.png"],
             "matches": [
                 "https://gemini.google.com/*",
-                "https://claude.ai/*"]
+                "https://claude.ai/*",
+                "https://chat.openai.com/*"]
                     }
     ],
     "content_scripts": [{
@@ -26,6 +27,7 @@
         "css": ["foreground.css"],
         "matches": [
             "https://gemini.google.com/*",
-            "https://claude.ai/*"]
+            "https://claude.ai/*",
+            "https://chat.openai.com/*"]
         }]
 }

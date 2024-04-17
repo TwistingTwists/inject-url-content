@@ -20,9 +20,34 @@ function parseURLs(maybe_text) {
 }
 
 
-const BUTTON_ID = 'claude-url-inject' // Change this according to the website
+const BUTTON_ID = window.location.href.includes('claude.ai') ? 'claude-url-inject' : (window.location.href.includes('chat.openai.com') ? 'openai-url-inject' : 'gemini-url-inject');
 
+function showToast(message) {
+  // Create a new div element for the toast
+  const toast = document.createElement('div');
+  toast.id = 'toast';
+  console.log("Showing toast")
 
+  // Add the message to the toast
+  toast.textContent = message;
+
+  // Get the button container element
+  const buttonContainer = document.getElementById('buttonContainer');
+
+  // Check if the button container exists
+  if (buttonContainer) {
+    // Append the toast to the button container
+    buttonContainer.appendChild(toast);
+  } else {
+    // If the button container doesn't exist, append the toast to the body
+    document.body.appendChild(toast);
+  }
+
+  // Remove the toast after 3 seconds (3000 milliseconds)
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
+}
 // Function to read the content of a URL and return the cleaned text
 async function getCleanedURLContent(url) {
   try {
@@ -66,6 +91,20 @@ function getGeminiText() {
     return fieldsetText;
   } else {
     console.log("Error: No fieldset element found on the page.");
+  }
+}
+
+function getOpenAIText() {
+  let fieldsetElement = document.querySelector("textarea#prompt-textarea");
+  // Check if the fieldset element exists
+  if (fieldsetElement) {
+    // Get the inner text of the fieldset element
+    let fieldsetText = fieldsetElement.value;
+
+    // Return the fieldset text
+    return fieldsetText;
+  } else {
+    console.log("Error: No textarea element found on the page.");
   }
 }
 
@@ -132,9 +171,16 @@ function createInsertContentButton(url, content) {
   buttonElement.addEventListener("click", () => {
     navigator.clipboard.writeText(content);
     console.log("Copied to clipboard:", content);
-
+    showToast("URL content Copied, Ctrl-V to paste")
   });
-  document.body.appendChild(buttonElement);
+
+  let buttonContainer = document.getElementById('buttonContainer');
+  if (!buttonContainer) {
+    buttonContainer = document.createElement('div');
+    buttonContainer.id = 'buttonContainer';
+    document.body.appendChild(buttonContainer);
+  }
+  buttonContainer.appendChild(buttonElement);
 }
 
 async function runCodeEvery3Seconds() {
@@ -150,6 +196,11 @@ async function runCodeEvery3Seconds() {
 
     } else if (currentURL.includes("https://claude.ai")) {
       const content = getClaudeText();
+      console.log(content);
+      await getContentFromIndexerAndInsert(content)
+
+    } else if (currentURL.includes("https://chat.openai.com")) {
+      const content = getOpenAIText();
       console.log(content);
       await getContentFromIndexerAndInsert(content)
     }
