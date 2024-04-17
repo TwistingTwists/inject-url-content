@@ -1,13 +1,6 @@
-TODO:
-- Read the content of the input section
-- Parse the url [HARSH]
-- Get the url content [HARSH]
-- Put the url content in the context window
-
 <div align="center">
     <img src="https://raw.githubusercontent.com/SimGus/chrome-addon-v3-starter/master/logo/logo-128.png"/>
-    <h1>Chrome Extension v3 Starter</h1>
-    <h3>A minimal template of a Chrome v3 addon</h3>
+    <h1>Claude: Use web content</h1>
 </div>
 
 This repository contains a minimal Chrome/Chromium extension that uses the newest version of the manifest (v3).

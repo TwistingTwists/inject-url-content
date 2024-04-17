@@ -70,28 +70,32 @@ function getGeminiText() {
 }
 
 async function getContentFromIndexerAndInsert(content) {
-  console.log("getContentFromIndexerAndInsert ----")
+  console.log("getContentFromIndexerAndInsert ----");
   if (content) {
     const urls = parseURLs(content);
     if (urls && urls.length > 0) {
       console.log(urls);
-      urls.forEach(async (url) => {
+      for (const url of urls) {
         if (!window.urlContentMap) {
           window.urlContentMap = new Map();
+        }
+
+        if (!window.urlButtonCreatedSet) {
+          window.urlButtonCreatedSet = new Set();
         }
 
         if (!window.urlContentMap.has(url)) {
           const url_text = await getCleanedURLContent(url);
           console.log(url_text, "url_text");
           window.urlContentMap.set(url, url_text);
-          createInsertContentButton(url, url_text);
-        } else {
-        if (window.urlContentMap.has(url)) {
+        }
+
+        if (window.urlContentMap.has(url) && !window.urlButtonCreatedSet.has(url)) {
           const url_text = window.urlContentMap.get(url);
           createInsertContentButton(url, url_text);
+          window.urlButtonCreatedSet.add(url);
         }
-        }
-      });
+      }
     }
   } else {
     console.log("no content found");
@@ -116,12 +120,8 @@ function createInsertContentButton(url, content) {
   console.log('Creating copy button');
 
   const buttonElement = document.createElement('button');
+  buttonElement.id = 'claude-url-inject';
   buttonElement.innerHTML = `<img src="${chrome.runtime.getURL('button.png')}">`;
-  buttonElement.style.position = 'fixed';
-  buttonElement.style.bottom = '20px';
-  buttonElement.style.left = '20px';
-  buttonElement.style.zIndex = '9999';
-  buttonElement.style.width = '120px';
 
   buttonElement.addEventListener("click", () => {
     navigator.clipboard.writeText(content);

@@ -1,34 +1,31 @@
 {
     "manifest_version": 3,
-    "name": "Link Content",
-    "description": "get me link content",
-    "version": "0.0.1",
+    "name": "Insert URL Content",
+    "description": "The tool lets you easily insert or copy-paste content from any link on Claude, Gemini.",
+    "version": "0.0.5",
     "icons": {
         "16": "logo/logo-16.png",
         "48": "logo/logo-48.png",
         "128": "logo/logo-128.png"
     },
-    "options_page": "settings/settings.html",
     "action": {
-        "default_title": "Chrome Addon v3 Starter",
+        "default_title": "Link Content",
         "default_popup": "popup/popup.html"
     },
-    "permissions": [
-        "activeTab"    ],
-    "host_permissions": [
-        "*://*/*"
-    ],
-    "background": {
-        "service_worker": "service-worker.js"
-    },
+    "permissions": [],
     "web_accessible_resources": [
         {
             "resources": ["button.svg", "button.png"],
-            "matches": ["<all_urls>"]
-        }
+            "matches": [
+                "https://gemini.google.com/*",
+                "https://claude.ai/*"]
+                    }
     ],
     "content_scripts": [{
         "js": ["foreground.js"],
-        "matches": ["<all_urls>"]
+        "css": ["foreground.css"],
+        "matches": [
+            "https://gemini.google.com/*",
+            "https://claude.ai/*"]
         }]
 }
